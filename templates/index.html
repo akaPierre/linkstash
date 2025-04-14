@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>LinkStash</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="bg-gray-100 flex items-center justify-center min-h-screen">
+    <div class="bg-white p-6 rounded shadow-md w-full max-w-2xl">
+      <div class="flex justify-between items-center mb-4">
+        <h1 class="text-2xl font-bold">LinkStash</h1>
+        {% if current_user.is_authenticated %}
+        <div>
+          <span class="mr-4">Hi, {{ current_user.email }}</span>
+          <a href="/logout" class="text-blue-500">Log Out</a>
+        </div>
+        {% else %}
+        <div>
+          <a href="/login" class="text-blue-500 mr-4">Log In</a>
+          <a href="/signup" class="text-blue-500">Sign Up</a>
+        </div>
+        {% endif %}
+      </div>
+      {% if current_user.is_authenticated %}
+      <form method="POST" action="/save" class="mb-6">
+        <div class="mb-4">
+          <label class="block text-gray-700">URL</label>
+          <input
+            type="text"
+            name="url"
+            class="w-full p-2 border rounded"
+            required
+          />
+        </div>
+        <div class="mb-4">
+          <label class="block text-gray-700">Title (Optional)</label>
+          <input type="text" name="title" class="w-full p-2 border rounded" />
+        </div>
+        <div class="mb-4">
+          <label class="block text-gray-700"
+            >Tags (e.g., SEO, inspiration)</label
+          >
+          <input type="text" name="tags" class="w-full p-2 border rounded" />
+        </div>
+        <button type="submit" class="bg-blue-500 text-white p-2 rounded w-full">
+          Save Link
+        </button>
+      </form>
+      {% if message %}
+      <p class="text-green-600 mb-4">{{ message }}</p>
+      {% endif %}
+      <h2 class="text-xl font-semibold mb-4">Your Links</h2>
+      <form method="GET" action="/search" class="mb-4">
+        <div class="flex">
+          <input
+            type="text"
+            name="query"
+            value="{{ query }}"
+            class="w-full p-2 border rounded-l"
+            placeholder="Search by title or tags"
+          />
+          <button type="submit" class="bg-blue-500 text-white p-2 rounded-r">
+            Search
+          </button>
+        </div>
+      </form>
+      {% if links %}
+      <table class="w-full border-collapse">
+        <thead>
+          <tr class="bg-gray-200">
+            <th class="border p-2">URL</th>
+            <th class="border p-2">Title</th>
+            <th class="border p-2">Tags</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for link in links %}
+          <tr>
+            <td class="border p-2">
+              <a href="{{ link.url }}" class="text-blue-500" target="_blank"
+                >{{ link.url }}</a
+              >
+            </td>
+            <td class="border p-2">{{ link.title or 'No title' }}</td>
+            <td class="border p-2">{{ link.tags or 'No tags' }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <p class="text-gray-600">No links saved yet.</p>
+      {% endif %} {% else %}
+      <p class="text-gray-600">
+        Please <a href="/login" class="text-blue-500">log in</a> or
+        <a href="/signup" class="text-blue-500">sign up</a> to save links.
+      </p>
+      {% endif %}
+    </div>
+  </body>
+</html>
